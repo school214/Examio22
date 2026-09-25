@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXAMIO - Fysik Prov: Elektromagnetism (Åk 8)</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --panel-bg: #ffffff;
+            --text-color: #1a202c;
+            --border-color: #cbd5e1;
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --accent-color: #059669;
+            --danger-color: #dc2626;
+            --header-bg: #0f172a;
+            --header-text: #ffffff;
+            --font-scale: 1;
+        }
+
+        body.dark-mode {
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --text-color: #f8fafc;
+            --border-color: #334155;
+            --primary-color: #3b82f6;
+            --primary-hover: #60a5fa;
+            --header-bg: #020617;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            font-size: calc(16px * var(--font-scale));
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        /* Top Navigation Header */
+        header {
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            color: #38bdf8;
+        }
+
+        .brand-badge {
+            background: #2563eb;
+            color: white;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .timer-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-tool {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .btn-tool:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-submit {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #059669;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px 80px 20px;
+        }
+
+        .card {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .question-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .tag-level {
+            font-size: 0.8rem;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+
+        .tag-e { background: #dcfce7; color: #166534; }
+        .tag-c { background: #fef9c3; color: #854d0e; }
+        .tag-a { background: #fee2e2; color: #991b1b; }
+
+        /* Student Info Box */
+        .student-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--panel-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            margin-top: 6px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        /* Dra Streck Matchning System */
+        .match-container {
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            margin-top: 20px;
+            user-select: none;
+        }
+
+        .match-column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .match-item {
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--panel-bg);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .match-item:hover {
+            border-color: var(--primary-color);
+        }
+
+        .match-item.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+
+        .match-item.matched {
+            border-color: var(--accent-color);
+            background-color: rgba(16, 185, 129, 0.1);
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--border-color);
+        }
+
+        .selected .dot, .matched .dot {
+            background-color: var(--primary-color);
+        }
+
+        svg#svg-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        line {
+            stroke: var(--primary-color);
+            stroke-width: 3;
+            stroke-dasharray: 4;
+            animation: dash 15s linear infinite;
+        }
+
+        /* Multiple Choice & Image Grid */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .option-label:hover {
+            background-color: rgba(0,0,0,0.03);
+        }
+
+        .people-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .person-box {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.02);
+        }
+
+        .person-name {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 4px;
+        }
+
+        /* Results Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--panel-bg);
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .score-badge {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            color: var(--primary-color);
+            margin: 15px 0;
+        }
+
+        .grade-box {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .result-item {
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 0;
+        }
+
+        .correct-ans {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .btn-reset {
+            background: var(--border-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .match-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            svg#svg-canvas {
+                display: none;
+            }
+            .student-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            EXAMIO
+            <span class="brand-badge">Provläge</span>
+        </div>
+        <div class="header-controls">
+            <div class="timer-box" id="timer">60:00</div>
+            <button class="btn-tool" onclick="toggleTheme()" title="Mörkt/Ljust läge">🌓</button>
+            <button class="btn-tool" onclick="changeFontSize(0.1)" title="Förstora text">A+</button>
+            <button class="btn-tool" onclick="changeFontSize(-0.1)" title="Förminska text">A-</button>
+            <button class="btn-submit" onclick="submitExam()">Lämna in prov</button>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- Elevuppgifter -->
+        <div class="card">
+            <div class="card-header">
+                <span class="question-title">Elevinformation</span>
+            </div>
+            <div class="student-info-grid">
+                <div>
+                    <label>Elevens namn:</label>
+                    <input type="text" id="student-name" placeholder="Förnamn och Efternamn">
+                </div>
+                <div>
+                    <label>Klass:</label>
+                    <input type="text" id="student-class" placeholder="t.ex. 8B">
+                </div>
+            </div>
+        </div>
+
+        <!-- UPPGIFT 1: Begreppsmatchning med Dra Streck -->
+        <div class="card">
+            <div class="card-header">
+                <span class="question-title">Uppgift 1: Dra streck mellan begrepp och rätt beskrivning</span>
+                <span class="tag-level tag-e">E-nivå (8p)</span>
+            </div>
+            <p>Klicka på ett begrepp till vänster och sedan på motsvarande förklaring till höger för att koppla ihop dem med ett streck. Klicka igen för att ta bort kopplingen.</p>
+            
+            <div class="match-container" id="match-block">
+                <svg id="svg-canvas"></svg>
+                
+                <div class="match-column" id="col-left">
+                    <div class="match-item" data-id="1" onclick="handleMatchClick(this, 'left')">
+                        <span>1. Missvisning</span> <div class="dot"></div>
+                    </div>
+                    <div class="match-item" data-id="2" onclick="handleMatchClick(this, 'left')">
+                        <span>2. Elmotor</span> <div class="dot"></div>
+                    </div>
+                    <div class="match-item" data-id="3" onclick="handleMatchClick(this, 'left')">
+                        <span>3. Transformator</span> <div class="dot"></div>
+                    </div>
+                    <div class="match-item" data-id="4" onclick="handleMatchClick(this, 'left')">
+                        <span>4. Elektromagnet</span> <div class="dot"></div>
+                    </div>
+                    <div class="match-item" data-id="5" onclick="handleMatchClick(this, 'left')">
+                        <span>5. Influens</span> <div class="dot"></div>
+                    </div>
+                    <div class="match-item" data-id="6" onclick="handleMatchClick(this, 'left')">
+                        <span>6. Repellera</span> <div class="dot"></div>
+                    </div>
+                    <div class="match-item" data-id="7" onclick="handleMatchClick(this, 'left')">
+                        <span>7. Generator</span> <div class="dot"></div>
+                    </div>
+                    <div class="match-item" data-id="8" onclick="handleMatchClick(this, 'left')">
+                        <span>8. Primärspole</span> <div class="dot"></div>
+                    </div>
+                </div>
+
+                <div class="match-column" id="col-right">
+                    <div class="match-item" data-id="A" onclick="handleMatchClick(this, 'right')">
+                        <div class="dot"></div> <span>A. Kan höja/sänka spänning</span>
+                    </div>
+                    <div class="match-item" data-id="B" onclick="handleMatchClick(this, 'right')">
+                        <div class="dot"></div> <span>B. Finns i en transformator och kopplas till strömkällan</span>
+                    </div>
+                    <div class="match-item" data-id="C" onclick="handleMatchClick(this, 'right')">
+                        <div class="dot"></div> <span>C. Magnet som kan stängas av och på</span>
+                    </div>
+                    <div class="match-item" data-id="D" onclick="handleMatchClick(this, 'right')">
+                        <div class="dot"></div> <span>D. Skapar elektrisk ström från rörelse</span>
+                    </div>
+                    <div class="match-item" data-id="E" onclick="handleMatchClick(this, 'right')">
+                        <div class="dot"></div> <span>E. Omvandlar elektrisk energi till rörelse</span>
+                    </div>
+                    <div class="match-item" data-id="F" onclick="handleMatchClick(this, 'right')">
+                        <div class="dot"></div> <span>F. Stöta ifrån sig</span>
+                    </div>
+                    <div class="match-item" data-id="G" onclick="handleMatchClick(this, 'right')">
+                        <div class="dot"></div> <span>G. Vinkelavvikelse mellan magnetisk och geografisk nordpol</span>
+                    </div>
+                    <div class="match-item" data-id="H" onclick="handleMatchClick(this, 'right')">
+                        <div class="dot"></div> <span>H. När magnetism "smittar" utan beröring</span>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-reset" onclick="resetConnections()">Nollställ alla streck</button>
+        </div>
+
+        <!-- UPPGIFT 2: Vem har rätt? -->
+        <div class="card">
+            <div class="card-header">
+                <span class="question-title">Uppgift 2: Vem eller vilka har rätt om elektromagneter?</span>
+                <span class="tag-level tag-c">C-nivå (3p)</span>
+            </div>
+            <div class="people-grid">
+                <div class="person-box">
+                    <div class="person-name">Louise</div>
+                    <div>"Den ena änden av en elektromagnet kan växla mellan att vara nordpol och sydpol."</div>
+                </div>
+                <div class="person-box">
+                    <div class="person-name">Amber</div>
+                    <div>"En elektromagnet blir starkare ju fler varv spolen har."</div>
+                </div>
+                <div class="person-box">
+                    <div class="person-name">Alex</div>
+                    <div>"Det går ingen ström genom järnkärnan."</div>
+                </div>
+                <div class="person-box">
+                    <div class="person-name">Mamadou</div>
+                    <div>"En elektromagnet kan ha två nordpoler samtidigt."</div>
+                </div>
+            </div>
+            <p><strong>A) Markera alla personer som har helt RÄTT:</strong></p>
+            <div class="options-grid">
+                <label class="option-label"><input type="checkbox" name="q2_person" value="Louise"> Louise</label>
+                <label class="option-label"><input type="checkbox" name="q2_person" value="Amber"> Amber</label>
+                <label class="option-label"><input type="checkbox" name="q2_person" value="Alex"> Alex</label>
+                <label class="option-label"><input type="checkbox" name="q2_person" value="Mamadou"> Mamadou</label>
+            </div>
+            <p style="margin-top:15px;"><strong>B) Motivera varför den/de du valde har rätt, och varför den som har fel har fel:</strong></p>
+            <textarea id="q2-text" placeholder="Förklara fysikaliskt vad som händer med strömriktningen, järnkärnan och polerna..."></textarea>
+        </div>
+
+        <!-- UPPGIFT 3: Statisk elektricitet vs Magnetism -->
+        <div class="card">
+            <div class="card-header">
+                <span class="question-title">Uppgift 3 & 4: Statisk elektricitet och kompasser</span>
+                <span class="tag-level tag-e">E-nivå (2p)</span>
+            </div>
+            <p><strong>3) Vilket påstående är FEL? En kompassnål påverkas av:</strong></p>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q3" value="A"> A. En järnspik</label>
+                <label class="option-label"><input type="radio" name="q3" value="B"> B. En uppladdad plastkam</label>
+                <label class="option-label"><input type="radio" name="q3" value="C"> C. En elektromagnet</label>
+                <label class="option-label"><input type="radio" name="q3" value="D"> D. En stavmagnet</label>
+            </div>
+            <p style="margin-top:15px;"><strong>4) En elev laddar en ballong och säger: <em>"Titta, ballongen har blivit magnetisk för att den fastnar på väggen!"</em> Vad tycker du om påståendet? Förklara den fysikaliska skillnaden.</strong></p>
+            <textarea id="q4-text" placeholder="Förklara skillnaden mellan elektriska laddningar (statisk elektricitet) och magnetism..."></textarea>
+        </div>
+
+        <!-- UPPGIFT 5 & 6: Generator, Induktion och Kraftverk -->
+        <div class="card">
+            <div class="card-header">
+                <span class="question-title">Uppgift 5 & 6: Generator och Induktion</span>
+                <span class="tag-level tag-c">C-nivå (4p)</span>
+            </div>
+            <p><strong>5) Förklara vad induktion är och hur en enkel generator fungerar:</strong></p>
+            <textarea id="q5-text" placeholder="Beskriv vad som händer när en magnet rör sig i en spole..."></textarea>
+
+            <p style="margin-top:15px;"><strong>6) I kraftverk finns stora generatorer. Vad är det som snurrar runt generatorn i:</strong></p>
+            <p>a) Ett vattenkraftverk?</p>
+            <input type="text" id="q6a-text" placeholder="Ditt svar...">
+            <p style="margin-top:10px;">b) Ett vindkraftverk?</p>
+            <input type="text" id="q6b-text" placeholder="Ditt svar...">
+        </div>
+
+        <!-- UPPGIFT 8: Laboration och Kontrollerade försöka (A-NIVÅ) -->
+        <div class="card">
+            <div class="card-header">
+                <span class="question-title">Uppgift 8: Laborationsmetodik - Undersöka Elektromagneter</span>
+                <span class="tag-level tag-a">A-nivå (3p)</span>
+            </div>
+            <p>Under en fysiklabb ska eleverna undersöka hur en elektromagnets styrka beror av antalet varv i spolen. De har två spolars: 300 varv och 600 varv, en spänningskälla, järnkärna och spikar.</p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li><strong>Lina:</strong> Kopplar först 300-varvsspolen till strömkällan och sedan 600-varvsspolen separat.</li>
+                <li><strong>Brahim:</strong> Seriekopplar båda spolarna samtidigt till samma strömkälla.</li>
+                <li><strong>Yusuf:</strong> Parallellkopplar båda spolarna till strömkällan.</li>
+            </ul>
+            <p><strong>a) Vilken elevs kopplingssätt ger det mest tillförlitliga och kontrollerade försöket?</strong></p>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q8a" value="Lina"> Lina</label>
+                <label class="option-label"><input type="radio" name="q8a" value="Brahim"> Brahim</label>
+                <label class="option-label"><input type="radio" name="q8a" value="Yusuf"> Yusuf</label>
+            </div>
+            <p style="margin-top:15px;"><strong>b) Motivera ditt svar fysikaliskt på A-nivå (Tips: Tänk på strömstyrkan I):</strong></p>
+            <textarea id="q8b-text" placeholder="Varför är detta kopplingssätt bäst för att hålla alla variabler utom varvtalet helt konstanta?"></textarea>
+        </div>
+
+        <!-- UPPGIFT 9 & 10: Magnetavsågning & Växelström -->
+        <div class="card">
+            <div class="card-header">
+                <span class="question-title">Uppgift 9 & 10: Djupare teoretisk fysik</span>
+                <span class="tag-level tag-c">C-nivå (3p)</span>
+            </div>
+            <p><strong>9) En stavmagnet delas på längden i två delar. Vad händer när delarna hamnar bredvid varandra igen?</strong></p>
+            <textarea id="q9-text" placeholder="Förklara var magnetens nord- och sydpol hamnar på de två halvorna..."></textarea>
+
+            <p style="margin-top:15px;"><strong>10) Vägguttaget ger 50 Hz växelström. Varför blinkar inte en lampa i hemmet så att vi märker det, trots att strömmen slår av och byter riktning 100 gånger per sekund?</strong></p>
+            <textarea id="q10-text" placeholder="Förklara varför vi ser ett fast sken (glödtrådens tröghet och ögats tröghet)..."></textarea>
+        </div>
+
+        <!-- UPPGIFT 11: Transformatorberäkning med formel -->
+        <div class="card">
+            <div class="card-header">
+                <span class="question-title">Uppgift 11: Beräkning med Transformatorformeln</span>
+                <span class="tag-level tag-a">A-nivå (3p)</span>
+            </div>
+            <p>En liten glödlampa på <strong>3,5 V</strong> kopplas till vägguttagets <strong>230 V</strong> via en transformator. Primärspolen har <strong>600 varv</strong>. För att lampan ska lysa med rätt styrka måste spänningen transformeras ner.</p>
+            <p style="margin-top:10px;">Formel: <code>Up / Us = Np / Ns</code></p>
+            
+            <p style="margin-top:15px;"><strong>Hur många varv måste sekundärspolen ($N_s$) ha? (Visa din uträkning):</strong></p>
+            <textarea id="q11-text" placeholder="Skriv din uträkning steg för steg här..."></textarea>
+            
+            <p style="margin-top:10px;"><strong>Svar ($N_s$ i antal varv, avrundat till heltal):</strong></p>
+            <input type="number" id="q11-val" placeholder="t.ex. 9" style="width: 200px;">
+        </div>
+
+    </div>
+
+    <!-- RESULTAT-MODAL (Visas när elev klickar Lämna In) -->
+    <div class="modal" id="results-modal">
+        <div class="modal-content">
+            <h2>Provresultat - EXAMIO</h2>
+            <p>Elev: <strong id="res-name">-</strong> | Klass: <strong id="res-class">-</strong></p>
+            
+            <div class="score-badge" id="res-score">0 / 26 p</div>
+            <div class="grade-box" id="res-grade">Betyg: F</div>
+
+            <h3>Rättningsmatris & Mönstersvar</h3>
+            <div id="res-details"></div>
+
+            <button class="btn-submit" onclick="closeModal()" style="margin-top:20px;">Stäng och granska</button>
+        </div>
+    </div>
+
+    <script>
+        // --- TIMING SYSTEM ---
+        let timeLeft = 3600; // 60 minuter
+        const timerElem = document.getElementById('timer');
+        
+        const countdown = setInterval(() => {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            timerElem.textContent = `${minutes}:${seconds}`;
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                alert('Tiden är slut! Provet lämnas in automatiskt.');
+                submitExam();
+            }
+            timeLeft--;
+        }, 1000);
+
+        // --- ACCESSIBILITY TOOLS ---
+        let currentFontScale = 1;
+        function changeFontSize(delta) {
+            currentFontScale += delta;
+            if (currentFontScale < 0.8) currentFontScale = 0.8;
+            if (currentFontScale > 1.4) currentFontScale = 1.4;
+            document.body.style.setProperty('--font-scale', currentFontScale);
+            drawLines();
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        // --- DRA STRECK (MATCHING) LOGIK ---
+        let selectedLeft = null;
+        let selectedRight = null;
+        let connections = []; // Array med {leftId, rightId}
+
+        // Rätta facit för matchning
+        const correctMatches = {
+            '1': 'G', // Missvisning -> Fel i kompassriktning
+            '2': 'E', // Elmotor -> Omvandlar el till rörelse
+            '3': 'A', // Transformator -> Kan höja/sänka spänning
+            '4': 'C', // Elektromagnet -> Kan stängas av/på
+            '5': 'H', // Influens -> Magnetism smittar
+            '6': 'F', // Repellera -> Stöta ifrån
+            '7': 'D', // Generator -> Skapar el från rörelse
+            '8': 'B'  // Primärspole -> Kopplas till strömkällan
+        };
+
+        function handleMatchClick(element, side) {
+            if (side === 'left') {
+                if (selectedLeft) selectedLeft.classList.remove('selected');
+                selectedLeft = element;
+                selectedLeft.classList.add('selected');
+            } else {
+                if (selectedRight) selectedRight.classList.remove('selected');
+                selectedRight = element;
+                selectedRight.classList.add('selected');
+            }
+
+            if (selectedLeft && selectedRight) {
+                const lId = selectedLeft.getAttribute('data-id');
+                const rId = selectedRight.getAttribute('data-id');
+
+                // Ta bort ev existerande koppling för vänster eller höger
+                connections = connections.filter(c => c.leftId !== lId && c.rightId !== rId);
+
+                connections.push({ leftId: lId, rightId: rId, leftElem: selectedLeft, rightElem: selectedRight });
+
+                selectedLeft.classList.remove('selected');
+                selectedRight.classList.remove('selected');
+                selectedLeft.classList.add('matched');
+                selectedRight.classList.add('matched');
+
+                selectedLeft = null;
+                selectedRight = null;
+
+                drawLines();
+            }
+        }
+
+        function drawLines() {
+            const svg = document.getElementById('svg-canvas');
+            svg.innerHTML = '';
+            const containerRect = document.getElementById('match-block').getBoundingClientRect();
+
+            connections.forEach(conn => {
+                const lDot = conn.leftElem.querySelector('.dot').getBoundingClientRect();
+                const rDot = conn.rightElem.querySelector('.dot').getBoundingClientRect();
+
+                const x1 = lDot.left + lDot.width/2 - containerRect.left;
+                const y1 = lDot.top + lDot.height/2 - containerRect.top;
+                const x2 = rDot.left + rDot.width/2 - containerRect.left;
+                const y2 = rDot.top + rDot.height/2 - containerRect.top;
+
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x1);
+                line.setAttribute('y1', y1);
+                line.setAttribute('x2', x2);
+                line.setAttribute('y2', y2);
+                svg.appendChild(line);
+            });
+        }
+
+        function resetConnections() {
+            connections = [];
+            document.querySelectorAll('.match-item').forEach(el => {
+                el.classList.remove('selected', 'matched');
+            });
+            document.getElementById('svg-canvas').innerHTML = '';
+            selectedLeft = null;
+            selectedRight = null;
+        }
+
+        window.addEventListener('resize', drawLines);
+
+        // --- RÄTTNING OCH SKOLVERKET BETYGSÄTTNING ---
+        function submitExam() {
+            let score = 0;
+            let maxScore = 26;
+            let detailsHtml = '';
+
+            const name = document.getElementById('student-name').value || 'Anonym Elev';
+            const cls = document.getElementById('student-class').value || '8';
+
+            // 1. Rätta Dra Streck (8p)
+            let matchScore = 0;
+            connections.forEach(c => {
+                if (correctMatches[c.leftId] === c.rightId) {
+                    matchScore++;
+                }
+            });
+            score += matchScore;
+            detailsHtml += `<div class="result-item"><strong>Uppgift 1 (Begreppsmatchning):</strong> ${matchScore} / 8 poäng rätta kopplade streck.</div>`;
+
+            // 2. Vem har rätt? (3p)
+            const personChecks = Array.from(document.querySelectorAll('input[name="q2_person"]:checked')).map(e => e.value);
+            const correctPeople = ['Louise', 'Amber', 'Alex'];
+            let personScore = 0;
+            if (personChecks.length === 3 && personChecks.every(p => correctPeople.includes(p))) {
+                personScore += 2;
+            } else if (personChecks.length > 0 && personChecks.every(p => correctPeople.includes(p))) {
+                personScore += 1;
+            }
+            const q2Text = document.getElementById('q2-text').value.toLowerCase();
+            if (q2Text.length > 20) personScore += 1; // Kvalitetssvar
+            score += personScore;
+            detailsHtml += `<div class="result-item"><strong>Uppgift 2 (Vem har rätt):</strong> ${personScore} / 3 poäng.<br><span class="correct-ans">Facit:</span> Louise, Amber och Alex har rätt. Mamadou har fel eftersom en magnet alltid har både nord- och sydpol.</div>`;
+
+            // 3. Statisk el vs magnetism (2p)
+            const q3Val = document.querySelector('input[name="q3"]:checked')?.value;
+            let q3Score = (q3Val === 'B') ? 1 : 0;
+            const q4Text = document.getElementById('q4-text').value.toLowerCase();
+            let q4Score = (q4Text.includes('laddning') || q4Text.includes('elektrisk') || q4Text.includes('statisk')) ? 1 : 0;
+            score += (q3Score + q4Score);
+            detailsHtml += `<div class="result-item"><strong>Uppgift 3 & 4:</strong> ${(q3Score + q4Score)} / 2 poäng.<br><span class="correct-ans">Facit:</span> Plastkammen påverkar inte kompassnålen. Ballongen är laddad med statisk elektricitet (elektroner), inte magnetism.</div>`;
+
+            // 5 & 6. Induktion & Kraftverk (4p)
+            const q5Text = document.getElementById('q5-text').value.toLowerCase();
+            let q5Score = (q5Text.includes('magnet') && q5Text.includes('spole') && (q5Text.includes('rörelse') || q5Text.includes('ström'))) ? 2 : 1;
+            const q6a = document.getElementById('q6a-text').value.toLowerCase();
+            const q6b = document.getElementById('q6b-text').value.toLowerCase();
+            let q6Score = 0;
+            if (q6a.includes('vatten') || q6a.includes('turbin')) q6Score++;
+            if (q6b.includes('vind') || q6b.includes('rotor') || q6b.includes('vingar')) q6Score++;
+            score += (q5Score + q6Score);
+            detailsHtml += `<div class="result-item"><strong>Uppgift 5 & 6 (Induktion & Kraftverk):</strong> ${(q5Score + q6Score)} / 4 poäng.<br><span class="correct-ans">Facit:</span> Induktion bildas när ett magnetfält ändras i en spole. Vatten snurrar turbinen i vattenkraftverk, vind snurrar rotorbladen i vindkraftverk.</div>`;
+
+            // 8. Laboration Brahim (3p - A-nivå)
+            const q8a = document.querySelector('input[name="q8a"]:checked')?.value;
+            let q8Score = 0;
+            if (q8a === 'Brahim') q8Score += 1;
+            const q8bText = document.getElementById('q8b-text').value.toLowerCase();
+            if (q8bText.includes('ström') || q8bText.includes('seriekoppla') || q8bText.includes('konstant') || q8bText.includes('variabel')) q8Score += 2;
+            score += q8Score;
+            detailsHtml += `<div class="result-item"><strong>Uppgift 8 (Laborativ metodik A-nivå):</strong> ${q8Score} / 3 poäng.<br><span class="correct-ans">Facit:</span> Brahim har rätt. Vid seriekoppling går exakt samma strömstyrka (I) genom båda spolarna, vilket gör det till ett helt kontrollerat försök.</div>`;
+
+            // 9 & 10. Delad magnet & 50Hz (3p)
+            const q9Text = document.getElementById('q9-text').value.toLowerCase();
+            const q10Text = document.getElementById('q10-text').value.toLowerCase();
+            let q910Score = 0;
+            if (q9Text.includes('repeller') || q9Text.includes('stöter') || q9Text.includes('nord') || q9Text.includes('syd')) q910Score += 1;
+            if (q10Text.includes('öga') || q10Text.includes('snabbt') || q10Text.includes('tröghet') || q10Text.includes('100')) q910Score += 2;
+            score += q910Score;
+            detailsHtml += `<div class="result-item"><strong>Uppgift 9 & 10:</strong> ${q910Score} / 3 poäng.<br><span class="correct-ans">Facit:</span> Delarna repellerar varandra på sidorna. Ögats tröghet gör att vi inte uppfattar de 100 nollställningarna per sekund i 50 Hz växelström.</div>`;
+
+            // 11. Transformatorberäkning (3p - A-nivå)
+            const q11Val = parseInt(document.getElementById('q11-val').value);
+            const q11Text = document.getElementById('q11-text').value.toLowerCase();
+            let q11Score = 0;
+            if (q11Val >= 8 && q11Val <= 10) q11Score += 1; // Rätt heltal (9 varv)
+            if (q11Text.includes('230') || q11Text.includes('3.5') || q11Text.includes('600') || q11Text.includes('up/us')) q11Score += 2;
+            score += q11Score;
+            detailsHtml += `<div class="result-item"><strong>Uppgift 11 (Transformatorberäkning A-nivå):</strong> ${q11Score} / 3 poäng.<br><span class="correct-ans">Uträkning:</span> Ns = Np * (Us / Up) = 600 * (3.5 / 230) ≈ 9.13 varv. <strong>Svar: ca 9 varv.</strong></div>`;
+
+            // Beräkna betyg baserat på Skolverket Lgr22
+            let grade = 'F';
+            let gradeColor = '#dc2626';
+            if (score >= 22) {
+                grade = 'A (Övergodkänt - Mycket goda kunskaper)';
+                gradeColor = '#059669';
+            } else if (score >= 18) {
+                grade = 'B';
+                gradeColor = '#10b981';
+            } else if (score >= 14) {
+                grade = 'C (Godkänt med goda kunskaper)';
+                gradeColor = '#d97706';
+            } else if (score >= 11) {
+                grade = 'D';
+                gradeColor = '#ca8a04';
+            } else if (score >= 8) {
+                grade = 'E (Godkänt)';
+                gradeColor = '#2563eb';
+            }
+
+            document.getElementById('res-name').textContent = name;
+            document.getElementById('res-class').textContent = cls;
+            document.getElementById('res-score').textContent = `${score} / ${maxScore} p`;
+            
+            const gradeElem = document.getElementById('res-grade');
+            gradeElem.textContent = `Preliminärt Betyg: ${grade}`;
+            gradeElem.style.backgroundColor = gradeColor;
+            gradeElem.style.color = '#ffffff';
+
+            document.getElementById('res-details').innerHTML = detailsHtml;
+            document.getElementById('results-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('results-modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
